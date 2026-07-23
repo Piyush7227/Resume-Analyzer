@@ -1,0 +1,7 @@
+flask
+google-generativeai
+PyPDF2
+fpdf2
+gunicorn
+reportlab
+python-dotenv

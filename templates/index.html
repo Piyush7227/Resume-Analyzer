@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeAI — Enterprise Resume Scoring & ATS Optimization</title>
+  <meta name="description" content="Instant AI-powered ATS resume analysis, career stage scoring, skill extraction, and automated resume improvement powered by Google Gemini." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+</head>
+<body>
+
+  <!-- ── Header / Navigation ─────────────────────── -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <div class="logo-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <path d="m9 15 2 2 4-4"/>
+          </svg>
+        </div>
+        <span class="logo-text">Resume<span class="logo-accent">AI</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#upload-section" class="nav-link">Analyzer</a>
+        <a href="#features-section" class="nav-link">Features</a>
+        <a href="#how-it-works" class="nav-link">Workflow</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="#upload-section" class="btn-sm-primary">Start Free Analysis</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Hero Section ───────────────────────────── -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-badge" data-aos="fade-down">
+        <span class="badge-pulse"></span>
+        <span>Gemini 2.0 Flash Intelligence Engine</span>
+      </div>
+      <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+        Optimize Your Resume for <br class="desktop-only" />
+        <span class="text-gradient">ATS Systems & Hiring Teams</span>
+      </h1>
+      <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="150">
+        Upload your PDF resume to receive a comprehensive multi-category audit, career stage evaluation, actionable rewrite roadmap, and an instant ATS-ready PDF export.
+      </p>
+      
+      <div class="hero-stats-row" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-card">
+          <span class="stat-value">100pt</span>
+          <span class="stat-meta">Multi-Stage Rubric</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-card">
+          <span class="stat-value">7 Areas</span>
+          <span class="stat-meta">Detailed Audit Breakdown</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-card">
+          <span class="stat-value">98.4%</span>
+          <span class="stat-meta">ATS Parser Match</span>
+        </div>
+      </div>
+
+      <div class="hero-cta-group" data-aos="fade-up" data-aos-delay="250">
+        <a href="#upload-section" class="btn-primary hero-btn">
+          <span>Upload Resume for Audit</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features Section ────────────────────────── -->
+  <section class="features-section" id="features-section">
+    <div class="container">
+      <div class="section-tag">Platform Capabilities</div>
+      <h2 class="section-title">Built for Modern Tech Hiring Standards</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="50">
+          <div class="feature-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3>Deterministic ATS Evaluation</h3>
+          <p>Scored against enterprise parsers (Greenhouse, Lever, Workday) for structural, format, and keyword compliance.</p>
+        </div>
+
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="feature-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          </div>
+          <h3>Stage-Calibrated Rubric</h3>
+          <p>Automatically adjusts expectations for Freshers vs. Senior Leads so your score accurately reflects your experience.</p>
+        </div>
+
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="150">
+          <div class="feature-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <h3>Metric & Verb Enhancement</h3>
+          <p>Identifies weak bullet points and rewrites them using strong action verbs and quantified impact metrics.</p>
+        </div>
+
+        <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="feature-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <h3>PDF Re-generation</h3>
+          <p>Exports an optimized, single-column standard PDF ready for immediate job application submissions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Upload Section ─────────────────────────── -->
+  <section class="upload-section" id="upload-section">
+    <div class="container">
+      <div class="upload-wrapper">
+        <div class="section-header">
+          <div class="section-tag">Instant Analysis</div>
+          <h2 class="section-title">Upload Your PDF Resume</h2>
+          <p class="section-subtitle">Supports PDF documents up to 10 MB. Data is processed securely in real-time.</p>
+        </div>
+
+        <div class="upload-card">
+          <form id="upload-form" enctype="multipart/form-data">
+            <div class="drop-zone" id="drop-zone">
+              <div class="drop-zone-inner">
+                <div class="upload-icon-circle">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                </div>
+                <h3 class="drop-title">Drag & drop your resume file here</h3>
+                <p class="drop-subtitle">or select a document from your computer</p>
+                <div class="drop-specs">PDF Format &bull; Max 10 MB</div>
+                <input type="file" id="resume-input" name="resume" accept=".pdf" hidden />
+                <button type="button" class="btn-outline-sm" id="browse-btn">Browse Files</button>
+              </div>
+
+              <!-- Selected File Box -->
+              <div class="file-selected" id="file-selected" style="display:none;">
+                <div class="file-icon-box">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="file-details">
+                  <span class="file-name" id="file-name">resume.pdf</span>
+                  <span class="file-size" id="file-size">0.0 MB</span>
+                </div>
+                <button type="button" class="file-remove-btn" id="file-remove" aria-label="Remove file">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div id="notification" class="notification hidden"></div>
+
+            <button type="submit" class="btn-primary btn-submit" id="analyze-btn" disabled>
+              <span class="btn-text">Run Comprehensive Analysis</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Analyze Loading Overlay ──────────────── -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-modal">
+      <div class="spinner-box">
+        <div class="spinner-ring-main"></div>
+      </div>
+      <h3 class="loading-title">Analyzing Resume Structure & Content</h3>
+      <div class="loading-progress-container">
+        <div class="loading-progress-track">
+          <div class="loading-progress-fill" id="analyze-bar-fill"></div>
+        </div>
+        <span class="loading-progress-pct" id="analyze-bar-pct">0%</span>
+      </div>
+      <div class="loading-steps-list">
+        <div class="loading-step-item active" id="step-1">
+          <span class="step-indicator"></span> <span>Extracting document text & formatting</span>
+        </div>
+        <div class="loading-step-item" id="step-2">
+          <span class="step-indicator"></span> <span>Evaluating ATS compliance & skill density</span>
+        </div>
+        <div class="loading-step-item" id="step-3">
+          <span class="step-indicator"></span> <span>Generating strategic feedback report</span>
+        </div>
+      </div>
+      <p class="loading-hint">Estimated completion time: 15–25 seconds</p>
+    </div>
+  </div>
+
+  <!-- ── Results Section ────────────────────────── -->
+  <section class="results-section hidden" id="results-section">
+    <div class="container">
+      <div class="results-header">
+        <div>
+          <div class="section-tag">Audit Results</div>
+          <h2 class="results-headline">Resume Performance Audit</h2>
+        </div>
+        <button class="btn-secondary" id="reanalyze-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload New Document
+        </button>
+      </div>
+
+      <!-- Stage Badge -->
+      <div id="career-stage-badge" style="display:none; margin-bottom:20px;"></div>
+
+      <!-- Score Banner -->
+      <div class="score-banner-card" id="score-banner">
+        <div class="score-primary-box">
+          <div class="score-ring-container">
+            <svg class="score-ring-svg" viewBox="0 0 160 160" width="140" height="140">
+              <circle class="score-ring-bg" cx="80" cy="80" r="65" />
+              <circle class="score-ring-fill" id="score-ring-fill" cx="80" cy="80" r="65"
+                stroke-dasharray="408.4" stroke-dashoffset="408.4" />
+            </svg>
+            <div class="score-ring-content">
+              <span class="score-value" id="score-number">0</span>
+              <span class="score-max">/ 100</span>
+            </div>
+          </div>
+          <div class="score-info">
+            <span class="score-caption">Overall Quality Rating</span>
+            <h3 class="score-status" id="score-level">Evaluating...</h3>
+            <div class="score-breakdown-list" id="score-breakdown"></div>
+          </div>
+        </div>
+
+        <div class="summary-box" id="summary-card">
+          <h4 class="box-title">Executive Summary</h4>
+          <p class="summary-text" id="ai-summary">Loading summary assessment...</p>
+          <div class="summary-meta-row">
+            <div class="badge-level" id="experience-badge">--</div>
+            <div class="tags-row" id="job-titles"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-Scores Grid -->
+      <div class="sub-scores-grid" id="sub-scores-grid"></div>
+
+      <!-- Explanation Card -->
+      <div class="card-panel" id="score-explanation-card" style="display:none;">
+        <div class="panel-header">
+          <div class="header-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <h3>Score Rationale & Analysis Details</h3>
+          </div>
+          <span class="pill-tag">Audit Breakdown</span>
+        </div>
+        <div class="explanation-grid">
+          <div class="explanation-block why-block">
+            <h4>Assessment Context</h4>
+            <p id="explanation-why-text"></p>
+          </div>
+          <div class="explanation-block reduced-block">
+            <h4>Points Deducted</h4>
+            <ul id="explanation-reduced-list"></ul>
+          </div>
+          <div class="explanation-block well-block">
+            <h4>Key Strengths</h4>
+            <ul id="explanation-well-list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills & ATS Row -->
+      <div class="dual-grid">
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="header-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <h3>Detected Technical Skills</h3>
+            </div>
+          </div>
+          <div class="skills-flex" id="skills-container"></div>
+        </div>
+
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="header-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <h3>ATS Compatibility Audit</h3>
+            </div>
+          </div>
+          <div class="ats-wrapper" id="ats-content"></div>
+        </div>
+      </div>
+
+      <!-- Strengths & Areas for Improvement -->
+      <div class="dual-grid">
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="header-title text-success">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <h3>Resume Strengths</h3>
+            </div>
+          </div>
+          <ul class="check-list positive-list" id="strengths-list"></ul>
+        </div>
+
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="header-title text-warning">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <h3>Areas to Improve</h3>
+            </div>
+          </div>
+          <ul class="check-list warning-list" id="weaknesses-list"></ul>
+        </div>
+      </div>
+
+      <!-- Missing Skills -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="header-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <h3>Missing Industry Keywords & Skills</h3>
+          </div>
+          <span class="pill-tag warning-pill">Recommended Addition</span>
+        </div>
+        <div class="skills-flex" id="missing-skills-container"></div>
+      </div>
+
+      <!-- Suggestions -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="header-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <h3>Actionable Improvement Roadmap</h3>
+          </div>
+        </div>
+        <ol class="action-steps-list" id="suggestions-list"></ol>
+      </div>
+
+      <!-- Action Banner -->
+      <div class="improve-banner-card" id="improve-cta-card">
+        <div class="banner-content">
+          <h3>Generate AI-Optimized Resume</h3>
+          <p>Let Gemini rewrite your project descriptions, quantify achievements, optimize keywords, and produce an ATS-compliant PDF document.</p>
+        </div>
+        <button class="btn-primary btn-lg" id="improve-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          <span>Generate Improved Resume</span>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Improve Loading Overlay ──────────────── -->
+  <div class="loading-overlay" id="improve-loading-overlay">
+    <div class="loading-modal">
+      <div class="spinner-box">
+        <div class="spinner-ring-main alt-ring"></div>
+      </div>
+      <h3 class="loading-title">Synthesizing Improved Resume Content</h3>
+      <div class="loading-progress-container">
+        <div class="loading-progress-track">
+          <div class="loading-progress-fill" id="improve-bar-fill"></div>
+        </div>
+        <span class="loading-progress-pct" id="improve-bar-pct">0%</span>
+      </div>
+      <div class="loading-steps-list">
+        <div class="loading-step-item active" id="imp-step-1">
+          <span class="step-indicator"></span> <span>Rewriting experience & project bullet points</span>
+        </div>
+        <div class="loading-step-item" id="imp-step-2">
+          <span class="step-indicator"></span> <span>Injecting industry keywords & verifying ATS compatibility</span>
+        </div>
+        <div class="loading-step-item" id="imp-step-3">
+          <span class="step-indicator"></span> <span>Building structured ReportLab PDF document</span>
+        </div>
+      </div>
+      <p class="loading-hint">Estimated time: 20–35 seconds</p>
+    </div>
+  </div>
+
+  <!-- ── Improvement Modal ──────────────────────── -->
+  <div class="modal-backdrop hidden" id="improve-modal">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <div class="modal-title-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <h2>Optimized Resume Document</h2>
+          <span class="status-badge" id="ats-optimized-badge" style="display:none;">ATS Standard Approved</span>
+        </div>
+        <button class="modal-close-btn" id="modal-close" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body-content">
+        <!-- Comparison Panel -->
+        <div class="compare-card" id="score-compare-panel" style="display:none;">
+          <div class="compare-scores-row">
+            <div class="compare-tile tile-before">
+              <span class="tile-caption">Original Score</span>
+              <span class="tile-number" id="compare-before-score">--</span>
+            </div>
+            <div class="compare-arrow-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <div class="compare-delta" id="compare-delta"></div>
+            </div>
+            <div class="compare-tile tile-after">
+              <span class="tile-caption">Optimized Score</span>
+              <span class="tile-number" id="compare-after-score">--</span>
+            </div>
+          </div>
+
+          <div class="verified-status-bar">
+            <span class="verified-pill" id="verified-score-badge" style="display:none;">Verified Scoring Audit Engine</span>
+            <div class="confidence-indicator" id="score-confidence" style="display:none;"></div>
+          </div>
+
+          <div class="compare-columns">
+            <div class="compare-col col-improved">
+              <h4>Key Enhancements</h4>
+              <ul id="compare-what-improved"></ul>
+            </div>
+            <div class="compare-col col-ats">
+              <h4>ATS Optimizations</h4>
+              <ul id="compare-ats-applied"></ul>
+            </div>
+            <div class="compare-col col-todo">
+              <h4>Further Recommendations</h4>
+              <ul id="compare-still-needs"></ul>
+            </div>
+          </div>
+
+          <div class="compare-summary-box" id="compare-summary-text"></div>
+
+          <div class="improvement-notes-box" id="improvement-notes-row" style="display:none;">
+            <h4>Applied Changes Log</h4>
+            <div class="notes-tags-flex" id="improvement-notes-list"></div>
+          </div>
+
+          <!-- Optimization Report -->
+          <div class="opt-report-card" id="opt-report-card" style="display:none;">
+            <div class="report-header-flex">
+              <span class="report-title">Optimization Intelligence Report</span>
+              <span class="report-pass-badge" id="opt-report-iters"></span>
+            </div>
+            <div class="report-stats-grid">
+              <div class="report-stat-item">
+                <span class="report-stat-num" id="opt-score-val">+0</span>
+                <span class="report-stat-lbl">Score Delta</span>
+              </div>
+              <div class="report-stat-item">
+                <span class="report-stat-num" id="opt-verbs-val">0</span>
+                <span class="report-stat-lbl">Action Verbs</span>
+              </div>
+              <div class="report-stat-item">
+                <span class="report-stat-num" id="opt-metrics-val">0</span>
+                <span class="report-stat-lbl">Metrics Injected</span>
+              </div>
+              <div class="report-stat-item">
+                <span class="report-stat-num" id="opt-kws-val">0</span>
+                <span class="report-stat-lbl">ATS Keywords</span>
+              </div>
+              <div class="report-stat-item">
+                <span class="report-stat-num" id="opt-skills-val">0</span>
+                <span class="report-stat-lbl">Total Skills</span>
+              </div>
+              <div class="report-stat-item">
+                <span class="report-stat-num" id="opt-projects-val">0</span>
+                <span class="report-stat-lbl">Projects Modified</span>
+              </div>
+            </div>
+            <div class="report-tags-list" id="opt-report-kws" style="display:none;"></div>
+            <div class="report-tags-list" id="opt-report-sections" style="display:none;"></div>
+          </div>
+
+          <div class="compare-loading" id="compare-loading">
+            <div class="mini-spinner"></div>
+            <span>Evaluating optimized document...</span>
+          </div>
+        </div>
+
+        <p class="preview-instruction">Review and verify your generated document formatting below:</p>
+
+        <!-- Preview Container -->
+        <div class="document-preview-box" id="resume-preview"></div>
+
+        <div class="modal-footer-actions">
+          <button class="btn-secondary" id="copy-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy Text
+          </button>
+          <a class="btn-primary btn-download" id="download-btn" href="#" download>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download ATS PDF
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Workflow Steps Section ─────────────────── -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header center-text">
+        <div class="section-tag">System Architecture</div>
+        <h2 class="section-title">How the Analysis Engine Works</h2>
+      </div>
+
+      <div class="workflow-steps-grid">
+        <div class="workflow-step-card">
+          <div class="workflow-step-num">01</div>
+          <h3>PDF Text & Layout Extraction</h3>
+          <p>Extracts structural text blocks, dates, and contact metadata, stripping standard PDF artifacts and unreadable ligatures.</p>
+        </div>
+        <div class="workflow-step-card">
+          <div class="workflow-step-num">02</div>
+          <h3>Multi-Stage Calibration</h3>
+          <p>Detects student vs. senior experience levels to evaluate against realistic expectations, ensuring accurate scoring.</p>
+        </div>
+        <div class="workflow-step-card">
+          <div class="workflow-step-num">03</div>
+          <h3>AI Enhancement & PDF Build</h3>
+          <p>Formulates strong impact bullets and generates a clean, single-column ReportLab PDF ready for immediate job submissions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="logo-text">Resume<span class="logo-accent">AI</span></span>
+          <span class="footer-divider">|</span>
+          <span class="footer-copy">&copy; 2026 ResumeAI Engine. Enterprise ATS Analytics.</span>
+        </div>
+        <div class="footer-meta">
+          <span>Powered by Gemini 2.0 Flash</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/static/script.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 550,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 40
+    });
+  </script>
+</body>
+</html>
