@@ -275,9 +275,6 @@ def compute_potential_score(analysis: dict, stage: str) -> dict:
 # Shared Helpers
 # ─────────────────────────────────────────────
 
-def allowed_file(filename: str) -> bool:
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 def extract_text_from_pdf(filepath: str) -> str:
     """Extract all text from a PDF using PyPDF2, with normalization for consistency."""
@@ -1471,19 +1468,18 @@ def improve_resume():
     Body: { resume_text, original_score?, score_breakdown? }
     Returns: { success, improved_data, pdf_filename, ats_optimizations_applied, ... }
     """
-    body = request.get_json(silent=True)
-    if not body or not body.get('resume_text'):
-        return jsonify({'error': 'No resume text provided.'}), 400
-
-    resume_text     = body['resume_text'].strip()
-    original_score  = int(body.get('original_score', 0))
-    score_breakdown = body.get('score_breakdown', {})
-    career_stage    = body.get('career_stage', 'student')
-
-    if len(resume_text) < 50:
-        return jsonify({'error': 'Resume text is too short to improve.'}), 400
-
     try:
+        body = request.get_json(silent=True)
+        if not body or not body.get('resume_text'):
+            return jsonify({'error': 'No resume text provided.'}), 400
+
+        resume_text     = body['resume_text'].strip()
+        original_score  = int(body.get('original_score', 0))
+        score_breakdown = body.get('score_breakdown', {})
+        career_stage    = body.get('career_stage', 'student')
+
+        if len(resume_text) < 50:
+            return jsonify({'error': 'Resume text is too short to improve.'}), 400
         # ── Iterative optimization (up to 3 Gemini passes) ────────────
         (improved_data, verified_score,
          verified_breakdown, verified_sub,

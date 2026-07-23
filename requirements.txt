@@ -1,7 +1,7 @@
 flask
-google-generativeai
+requests
 PyPDF2
-fpdf2
-gunicorn
+pypdf
 reportlab
+gunicorn
 python-dotenv
