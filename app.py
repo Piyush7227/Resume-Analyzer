@@ -25,15 +25,20 @@ from dotenv import load_dotenv
 # Load environment variables from .env (only active locally; ignored on servers)
 load_dotenv()
 
-# ReportLab imports for PDF generation
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import mm
-from reportlab.lib import colors
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, HRFlowable, ListFlowable, ListItem
-)
-from reportlab.lib.enums import TA_LEFT, TA_CENTER
+# ReportLab imports for PDF generation (wrapped — app starts even if reportlab is missing)
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import mm
+    from reportlab.lib import colors
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, HRFlowable, ListFlowable, ListItem
+    )
+    from reportlab.lib.enums import TA_LEFT, TA_CENTER
+    REPORTLAB_AVAILABLE = True
+except Exception as _rl_err:
+    print(f'[Warning] reportlab not available: {_rl_err}. PDF generation will be disabled.')
+    REPORTLAB_AVAILABLE = False
 
 # ─────────────────────────────────────────────
 # App Configuration
@@ -1211,13 +1216,14 @@ def _build_ats_optimization_list(original_text: str, improved_data: dict, ai_gen
 # PDF Generation with ReportLab
 # ─────────────────────────────────────────────
 
-# Color palette
-C_PRIMARY   = colors.HexColor('#4f46e5')   # indigo
-C_ACCENT    = colors.HexColor('#7c3aed')   # violet
-C_DARK      = colors.HexColor('#1e1b4b')   # dark indigo
-C_TEXT      = colors.HexColor('#1f2937')   # near black
-C_MUTED     = colors.HexColor('#6b7280')   # gray
-C_LINE      = colors.HexColor('#e5e7eb')   # light gray
+# PDF color palette (only defined when reportlab is available)
+if REPORTLAB_AVAILABLE:
+    C_PRIMARY   = colors.HexColor('#4f46e5')   # indigo
+    C_ACCENT    = colors.HexColor('#7c3aed')   # violet
+    C_DARK      = colors.HexColor('#1e1b4b')   # dark indigo
+    C_TEXT      = colors.HexColor('#1f2937')   # near black
+    C_MUTED     = colors.HexColor('#6b7280')   # gray
+    C_LINE      = colors.HexColor('#e5e7eb')   # light gray
 
 
 def build_pdf_styles():
@@ -1503,7 +1509,10 @@ def improve_resume():
         # ── Generate PDF ───────────────────────────────────────────────
         pdf_filename = f"improved_resume_{uuid.uuid4().hex[:8]}.pdf"
         pdf_path     = os.path.join(PDF_FOLDER, pdf_filename)
-        generate_resume_pdf(improved_data, pdf_path)
+        if REPORTLAB_AVAILABLE:
+            generate_resume_pdf(improved_data, pdf_path)
+        else:
+            open(pdf_path, 'wb').close()  # empty placeholder if reportlab unavailable
 
         _cleanup_old_pdfs()
 
