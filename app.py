@@ -384,9 +384,10 @@ def call_gemini(prompt: str, expect_json: bool = True, temperature: float = 0.3)
             raise RuntimeError(f'Gemini API error: {error_str}')
 
     raise RuntimeError(
-        'All Gemini API keys are rate-limited. '
-        'Please wait 1 minute and try again, or add a new API key at '
-        'https://aistudio.google.com/app/apikey'
+        'Gemini API quota exceeded. Your free-tier daily quota is exhausted. '
+        'Options: (1) Wait until tomorrow for quota to reset, '
+        '(2) Create a fresh API key at https://aistudio.google.com/app/apikey, '
+        'or (3) Enable billing in Google Cloud Console.'
     )
 
 
