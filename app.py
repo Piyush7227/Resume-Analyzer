@@ -18,6 +18,7 @@ try:
 except ImportError:
     import pypdf as PyPDF2
 from flask import Flask, request, jsonify, render_template, send_from_directory
+from werkzeug.exceptions import HTTPException
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
@@ -38,7 +39,9 @@ from reportlab.lib.enums import TA_LEFT, TA_CENTER
 # App Configuration
 # ─────────────────────────────────────────────
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
+app.config['MAX_CONTENT_LENGTH']   = 10 * 1024 * 1024  # 10 MB
+app.config['PROPAGATE_EXCEPTIONS'] = False   # Always use our @errorhandler — never Werkzeug's HTML page
+app.config['TRAP_HTTP_EXCEPTIONS'] = True    # Route HTTPExceptions through our handlers too
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 PDF_FOLDER    = os.path.join(os.path.dirname(__file__), 'generated_pdfs')
@@ -1594,22 +1597,26 @@ def health():
 
 # ─────────────────────────────────────────────
 # Global JSON Error Handlers
+# These ensure the API ALWAYS returns JSON, never an HTML error page.
 # ─────────────────────────────────────────────
-@app.errorhandler(413)
-def request_entity_too_large(e):
-    return jsonify({'error': 'File too large. Maximum allowed size is 10 MB.'}), 413
 
-@app.errorhandler(404)
-def not_found(e):
-    return jsonify({'error': 'Requested endpoint not found.'}), 404
-
-@app.errorhandler(500)
-def server_error(e):
-    return jsonify({'error': f'Internal Server Error: {str(e)}'}), 500
+@app.errorhandler(HTTPException)
+def handle_http_exception(e):
+    """Catch all Werkzeug HTTP exceptions (404, 405, 413 …) → JSON."""
+    msg = {
+        400: 'Bad request.',
+        404: 'Endpoint not found.',
+        405: 'HTTP method not allowed for this endpoint.',
+        413: 'File too large. Maximum allowed size is 10 MB.',
+    }.get(e.code, str(e))
+    return jsonify({'error': msg}), e.code
 
 @app.errorhandler(Exception)
-def handle_exception(e):
-    return jsonify({'error': f'Server Error: {str(e)}'}), 500
+def handle_generic_exception(e):
+    """Catch any unhandled Python exception → JSON 500."""
+    import traceback
+    print('[ERROR]', traceback.format_exc())
+    return jsonify({'error': f'Internal server error: {str(e)}'}), 500
 
 
 
@@ -1639,4 +1646,4 @@ if __name__ == '__main__':
     print("  AI Resume Analyzer - Starting Server")
     print("  Open http://127.0.0.1:5000 in your browser")
     print("=" * 55)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=5000)
