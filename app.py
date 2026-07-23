@@ -48,6 +48,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {'pdf'}
 
+def allowed_file(filename: str) -> bool:
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 # ─────────────────────────────────────────────
 # Gemini API Setup
 # ─────────────────────────────────────────────
@@ -58,11 +61,7 @@ _raw_keys = os.getenv('GEMINI_API_KEYS', '')
 GEMINI_API_KEYS = [k.strip() for k in _raw_keys.split(',') if k.strip()]
 
 if not GEMINI_API_KEYS:
-    raise RuntimeError(
-        "\n\n  ❌  GEMINI_API_KEYS environment variable is not set!\n"
-        "  Create a .env file with:  GEMINI_API_KEYS=your_key_here\n"
-        "  Get a free key at: https://aistudio.google.com/app/apikey\n"
-    )
+    print("[Warning] GEMINI_API_KEYS environment variable is not set or empty.")
 
 _key_index = 0  # tracks which key is currently active
 
@@ -312,6 +311,9 @@ def call_gemini(prompt: str, expect_json: bool = True, temperature: float = 0.3)
     """
     global _key_index
 
+    if not GEMINI_API_KEYS:
+        raise RuntimeError('GEMINI_API_KEYS environment variable is not configured. Please set GEMINI_API_KEYS in your .env file or host environment settings.')
+
     gen_config = {
         'temperature': temperature,
         'maxOutputTokens': 8192,
@@ -389,6 +391,9 @@ def call_gemini_analysis(prompt: str) -> str:
     to ensure score variability across different resume quality levels.
     """
     global _key_index
+
+    if not GEMINI_API_KEYS:
+        raise RuntimeError('GEMINI_API_KEYS environment variable is not configured. Please set GEMINI_API_KEYS in your .env file or host environment settings.')
 
     gen_config = {
         'temperature': 0.45,   # 0.45: enough variability for score differentiation, low enough to keep same-text variance within ±3 pts
@@ -1405,19 +1410,20 @@ def analyze_resume():
     POST /analyze
     Returns: { success, analysis, resume_text }
     """
-    if 'resume' not in request.files:
-        return jsonify({'error': 'No file uploaded.'}), 400
-
-    file = request.files['resume']
-    if file.filename == '':
-        return jsonify({'error': 'No file selected.'}), 400
-    if not allowed_file(file.filename):
-        return jsonify({'error': 'Invalid file type. PDF only.'}), 400
-
-    filename = secure_filename(file.filename)
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
+    filepath = None
     try:
+        if 'resume' not in request.files:
+            return jsonify({'error': 'No file uploaded.'}), 400
+
+        file = request.files['resume']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected.'}), 400
+        if not allowed_file(file.filename):
+            return jsonify({'error': 'Invalid file type. PDF only.'}), 400
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
         file.save(filepath)
         resume_text = extract_text_from_pdf(filepath)
 
@@ -1454,7 +1460,7 @@ def analyze_resume():
     except Exception as e:
         return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
     finally:
-        if os.path.exists(filepath):
+        if filepath and os.path.exists(filepath):
             os.remove(filepath)
 
 
