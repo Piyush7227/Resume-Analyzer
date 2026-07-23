@@ -476,7 +476,16 @@ uploadForm.addEventListener('submit', async e => {
 
   try {
     const resp = await fetch('/analyze', { method: 'POST', body: formData });
-    const data = await resp.json();
+    let data = {};
+    const contentType = resp.headers.get('content-type') || '';
+
+    if (contentType.includes('application/json')) {
+      data = await resp.json();
+    } else {
+      const rawText = await resp.text();
+      throw new Error(`Server returned HTTP ${resp.status}: ${rawText.substring(0, 150)}`);
+    }
+
     stopLoadingSteps(loadingOverlay);
 
     if (!resp.ok || data.error) {
@@ -495,7 +504,7 @@ uploadForm.addEventListener('submit', async e => {
 
   } catch (err) {
     stopLoadingSteps(loadingOverlay);
-    showNotification(`❌ Network error: ${err.message}`, 'error');
+    showNotification(`❌ ${err.message}`, 'error');
     analyzeBtn.disabled = false;
   }
 });
@@ -762,7 +771,16 @@ improveBtn.addEventListener('click', async () => {
         career_stage:    lastCareerStage,
       }),
     });
-    const data = await resp.json();
+
+    let data = {};
+    const contentType = resp.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      data = await resp.json();
+    } else {
+      const rawText = await resp.text();
+      throw new Error(`Server returned HTTP ${resp.status}: ${rawText.substring(0, 150)}`);
+    }
+
     stopLoadingSteps(improveLoadingOverlay);
 
     if (!resp.ok || data.error) {

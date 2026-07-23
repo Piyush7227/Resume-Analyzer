@@ -348,6 +348,13 @@ def call_gemini(prompt: str, expect_json: bool = True, temperature: float = 0.3)
                 time.sleep(wait)
                 continue
 
+            if resp.status_code in (400, 403):
+                err_data = resp.json() if resp.headers.get('content-type', '').startswith('application/json') else {}
+                err_msg = err_data.get('error', {}).get('message', '')
+                if 'API_KEY_INVALID' in str(err_data) or 'API key not valid' in err_msg:
+                    raise RuntimeError('Invalid Gemini API key. Please check your GEMINI_API_KEYS in .env or Render environment variables.')
+                raise RuntimeError(f'Gemini API Error ({resp.status_code}): {err_msg or resp.text}')
+
             resp.raise_for_status()
             parts = resp.json()['candidates'][0]['content']['parts']
             return ''.join(p.get('text', '') for p in parts)
@@ -400,6 +407,13 @@ def call_gemini_analysis(prompt: str) -> str:
                 },
                 timeout=120
             )
+
+            if resp.status_code in (400, 403):
+                err_data = resp.json() if resp.headers.get('content-type', '').startswith('application/json') else {}
+                err_msg = err_data.get('error', {}).get('message', '')
+                if 'API_KEY_INVALID' in str(err_data) or 'API key not valid' in err_msg:
+                    raise RuntimeError('Invalid Gemini API key. Please check your GEMINI_API_KEYS in .env or Render environment variables.')
+                raise RuntimeError(f'Gemini API Error ({resp.status_code}): {err_msg or resp.text}')
 
             if resp.status_code == 429:
                 retry_after = resp.headers.get('Retry-After')
@@ -1571,6 +1585,26 @@ def download_pdf(filename):
 @app.route('/health')
 def health():
     return jsonify({'status': 'ok', 'model': GEMINI_MODEL})
+
+
+# ─────────────────────────────────────────────
+# Global JSON Error Handlers
+# ─────────────────────────────────────────────
+@app.errorhandler(413)
+def request_entity_too_large(e):
+    return jsonify({'error': 'File too large. Maximum allowed size is 10 MB.'}), 413
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({'error': 'Requested endpoint not found.'}), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return jsonify({'error': f'Internal Server Error: {str(e)}'}), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    return jsonify({'error': f'Server Error: {str(e)}'}), 500
 
 
 
