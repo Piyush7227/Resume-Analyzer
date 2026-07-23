@@ -13,7 +13,10 @@ import re
 import uuid
 import time
 import requests
-import PyPDF2
+try:
+    import PyPDF2
+except ImportError:
+    import pypdf as PyPDF2
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
