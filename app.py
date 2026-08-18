@@ -2,7 +2,7 @@
 AI Resume Analyzer — Flask Backend
 Features:
   - /analyze   : Extract text + Gemini analysis
-  - /improve   : Gemini rewrites resume → structured JSON
+  - /improve   : Gemini rewrites resume -> structured JSON
   - /download/<filename> : Serve generated PDF
 Compatible with Python 3.8+
 """
@@ -83,7 +83,7 @@ GEMINI_API_URL = (
 # ─────────────────────────────────────────────
 # Career Stage Rubrics
 # ─────────────────────────────────────────────
-# Each stage maps category → (display_label, max_pts, evaluation_hint)
+# Each stage maps category -> (display_label, max_pts, evaluation_hint)
 # All max_pts within a stage sum to exactly 100.
 
 STAGE_RUBRICS = {
@@ -798,15 +798,15 @@ You are a FAANG-level technical resume writer, ATS optimization expert, and seni
 - Every project must have 2-3 rich bullets with metrics
 
 **PRIORITY 2 — ACTION VERBS (apply to every single bullet):**
-- Replace ALL weak verbs: built→Engineered, made→Developed, worked→Implemented, helped→Collaborated, created→Architected, used→Leveraged, fixed→Resolved, ran→Orchestrated
+- Replace ALL weak verbs: built->Engineered, made->Developed, worked->Implemented, helped->Collaborated, created->Architected, used->Leveraged, fixed->Resolved, ran->Orchestrated
 - Allowed strong verbs: Engineered, Architected, Designed, Developed, Optimized, Spearheaded, Deployed, Integrated, Automated, Streamlined, Implemented, Reduced, Increased, Delivered, Launched, Accelerated, Migrated, Refactored, Established, Orchestrated
 
 **PRIORITY 3 — QUANTIFICATION (add to every bullet where plausible):**
-- Users/scale → "Serving X+ concurrent users"
-- Performance → "reducing latency by X%" or "improving throughput by X%"
-- Datasets → "processing X+ records" or "X GB dataset"
-- ML models → "achieving X% accuracy on test set"
-- Time savings → "reducing manual effort by X hours/week"
+- Users/scale -> "Serving X+ concurrent users"
+- Performance -> "reducing latency by X%" or "improving throughput by X%"
+- Datasets -> "processing X+ records" or "X GB dataset"
+- ML models -> "achieving X% accuracy on test set"
+- Time savings -> "reducing manual effort by X hours/week"
 - ONLY add metrics that are directionally implied — never fabricate context
 
 **PRIORITY 4 — ATS KEYWORD INJECTION:**
@@ -825,7 +825,7 @@ You are a FAANG-level technical resume writer, ATS optimization expert, and seni
 - Add standard missing ones: Git, GitHub, VS Code, REST APIs, Agile if not present
 
 **FORMATTING:**
-- ATS-optimal order: Summary → Skills → Experience → Projects → Education → Certifications
+- ATS-optimal order: Summary -> Skills -> Experience -> Projects -> Education -> Certifications
 - Consistent date format: Mon YYYY – Mon YYYY
 - 3-5 bullets per experience role, 2-3 per project
 - Add relevant coursework to education if implied (Data Structures, Algorithms, DBMS, OS, ML)
@@ -996,7 +996,7 @@ MANDATORY BOOST RULES:
 3. ATS KEYWORDS (15 pts): inject into summary+skills.other+bullets: REST API, CI/CD pipeline, Agile/Scrum, OOP, data structures and algorithms, version control, cloud computing, system design
 4. EXPERIENCE (15 pts): every bullet starts with strong verb + contains at least one number; remove ALL generic bullets
 5. SUMMARY: 3-4 sentences — role+education, top 3 tech, quantified achievement, career target with ATS keyword
-6. FORMATTING: section order: summary→skills→experience→projects→education→certifications
+6. FORMATTING: section order: summary->skills->experience->projects->education->certifications
 
 Return ONLY a valid JSON object with EXACTLY the same structure as the input JSON.
 NEVER invent jobs, degrees, or companies. Only add metrics directionally implied by content.
@@ -1332,6 +1332,20 @@ def generate_resume_pdf(data: dict, output_path: str):
     """
     Generate a professional ATS-friendly resume PDF from the improved data dict.
     """
+    # Sanitize text: replace common Unicode chars Helvetica can't encode
+    _UNICODE_MAP = {
+        '\u2192': '->', '\u2190': '<-', '\u2022': '*', '\u2013': '-',
+        '\u2014': '--', '\u201c': '"', '\u201d': '"', '\u2018': "'",
+        '\u2019': "'", '\u2026': '...', '\u00b7': '*', '\u25cf': '*',
+    }
+    def safe_text(s: str) -> str:
+        if not isinstance(s, str):
+            s = str(s) if s is not None else ''
+        for uc, asc in _UNICODE_MAP.items():
+            s = s.replace(uc, asc)
+        # Drop any remaining chars outside Latin-1 that Helvetica can't encode
+        return s.encode('latin-1', errors='replace').decode('latin-1')
+
     doc = SimpleDocTemplate(
         output_path,
         pagesize=A4,
@@ -1343,12 +1357,12 @@ def generate_resume_pdf(data: dict, output_path: str):
 
     def add_section(title: str):
         story.append(Spacer(1, 4))
-        story.append(Paragraph(title.upper(), styles['section_heading']))
+        story.append(Paragraph(safe_text(title.upper()), styles['section_heading']))
         story.append(HRFlowable(width='100%', thickness=1.2, color=C_PRIMARY, spaceAfter=4))
 
     # ── Header ──────────────────────────────────
     name = data.get('candidate_name', 'Your Name')
-    story.append(Paragraph(name, styles['name']))
+    story.append(Paragraph(safe_text(name), styles['name']))
 
     contact = data.get('contact', {})
     contact_parts = [
@@ -1361,7 +1375,7 @@ def generate_resume_pdf(data: dict, output_path: str):
         ] if p
     ]
     if contact_parts:
-        story.append(Paragraph('  |  '.join(contact_parts), styles['contact']))
+        story.append(Paragraph(safe_text('  |  '.join(contact_parts)), styles['contact']))
 
     story.append(HRFlowable(width='100%', thickness=2, color=C_PRIMARY, spaceAfter=4))
 
@@ -1369,7 +1383,7 @@ def generate_resume_pdf(data: dict, output_path: str):
     summary = data.get('professional_summary', '')
     if summary:
         add_section('Professional Summary')
-        story.append(Paragraph(summary, styles['summary']))
+        story.append(Paragraph(safe_text(summary), styles['summary']))
 
     # ── Experience ───────────────────────────────
     experience = data.get('experience', [])
@@ -1379,11 +1393,11 @@ def generate_resume_pdf(data: dict, output_path: str):
             title_line = f"<b>{job.get('title','')}</b>"
             if job.get('company'):
                 title_line += f"  ·  {job.get('company','')}"
-            story.append(Paragraph(title_line, styles['job_title']))
+            story.append(Paragraph(safe_text(title_line), styles['job_title']))
             if job.get('duration'):
-                story.append(Paragraph(job['duration'], styles['job_meta']))
+                story.append(Paragraph(safe_text(job['duration']), styles['job_meta']))
             for bullet in job.get('bullets', []):
-                story.append(Paragraph(f"• {bullet}", styles['bullet']))
+                story.append(Paragraph(safe_text(f"• {bullet}"), styles['bullet']))
 
     # ── Education ────────────────────────────────
     education = data.get('education', [])
@@ -1393,11 +1407,11 @@ def generate_resume_pdf(data: dict, output_path: str):
             title_line = f"<b>{edu.get('degree','')}</b>"
             if edu.get('institution'):
                 title_line += f"  ·  {edu.get('institution','')}"
-            story.append(Paragraph(title_line, styles['job_title']))
+            story.append(Paragraph(safe_text(title_line), styles['job_title']))
             if edu.get('duration'):
-                story.append(Paragraph(edu['duration'], styles['job_meta']))
+                story.append(Paragraph(safe_text(edu['duration']), styles['job_meta']))
             if edu.get('details'):
-                story.append(Paragraph(edu['details'], styles['bullet']))
+                story.append(Paragraph(safe_text(edu['details']), styles['bullet']))
 
     # ── Skills ───────────────────────────────────
     skills = data.get('skills', {})
@@ -1414,7 +1428,7 @@ def generate_resume_pdf(data: dict, output_path: str):
     if skill_lines:
         add_section('Technical Skills')
         for label, value in skill_lines:
-            story.append(Paragraph(label + value, styles['skill_group']))
+            story.append(Paragraph(safe_text(label + value), styles['skill_group']))
 
     # ── Projects ─────────────────────────────────
     projects = data.get('projects', [])
@@ -1424,23 +1438,23 @@ def generate_resume_pdf(data: dict, output_path: str):
             title_line = f"<b>{proj.get('name','')}</b>"
             if proj.get('tech'):
                 title_line += f"  <font color='#7c3aed' size='8'>({proj.get('tech','')})</font>"
-            story.append(Paragraph(title_line, styles['job_title']))
+            story.append(Paragraph(safe_text(title_line), styles['job_title']))
             for bullet in proj.get('bullets', []):
-                story.append(Paragraph(f"• {bullet}", styles['bullet']))
+                story.append(Paragraph(safe_text(f"• {bullet}"), styles['bullet']))
 
     # ── Certifications ───────────────────────────────────────────
     certs = data.get('certifications', [])
     if certs:
         add_section('Certifications')
         for cert in certs:
-            story.append(Paragraph(f"• {cert}", styles['cert']))
+            story.append(Paragraph(safe_text(f"• {cert}"), styles['cert']))
 
     # ── Achievements ───────────────────────────────────────────
     achievements = data.get('achievements', [])
     if achievements:
         add_section('Achievements & Awards')
         for ach in achievements:
-            story.append(Paragraph(f"• {ach}", styles['cert']))
+            story.append(Paragraph(safe_text(f"• {ach}"), styles['cert']))
 
     doc.build(story)
 
@@ -1560,7 +1574,7 @@ def improve_resume():
 
         _cleanup_old_pdfs()
 
-        print(f"[Improve] Done. {original_score} → {verified_score} "
+        print(f"[Improve] Done. {original_score} -> {verified_score} "
               f"in {iterations_run} pass(es).")
 
         return jsonify({
@@ -1655,7 +1669,7 @@ def health():
 
 @app.errorhandler(HTTPException)
 def handle_http_exception(e):
-    """Catch all Werkzeug HTTP exceptions (404, 405, 413 …) → JSON."""
+    """Catch all Werkzeug HTTP exceptions (404, 405, 413 …) -> JSON."""
     msg = {
         400: 'Bad request.',
         404: 'Endpoint not found.',
@@ -1666,7 +1680,7 @@ def handle_http_exception(e):
 
 @app.errorhandler(Exception)
 def handle_generic_exception(e):
-    """Catch any unhandled Python exception → JSON 500."""
+    """Catch any unhandled Python exception -> JSON 500."""
     import traceback
     print('[ERROR]', traceback.format_exc())
     return jsonify({'error': f'Internal server error: {str(e)}'}), 500
