@@ -342,19 +342,25 @@ def call_gemini(prompt: str, expect_json: bool = True, temperature: float = 0.3)
             )
 
             if resp.status_code == 429:
-                # Read Retry-After header if Google provides it
-                retry_after = resp.headers.get('Retry-After')
-                if retry_after:
-                    wait = int(retry_after)
-                else:
-                    wait = min(10 * (2 ** attempt), 60)  # exponential, capped at 60s
+                err_body = ''
+                try:
+                    err_body = str(resp.json())
+                except Exception:
+                    pass
 
-                # Rotate to next key
+                # Daily quota exhausted — no point retrying or sleeping
+                if 'PerDay' in err_body or 'per_day' in err_body.lower() or 'daily' in err_body.lower():
+                    raise RuntimeError(
+                        'Gemini API daily quota exhausted. '
+                        'Please create a new API key at https://aistudio.google.com/app/apikey '
+                        'or wait until tomorrow for the quota to reset.'
+                    )
+
+                # Per-minute rate limit — rotate key and retry with short wait
+                retry_after = resp.headers.get('Retry-After')
+                wait = int(retry_after) if retry_after else min(5 * (2 ** attempt), 30)
                 _key_index = (_key_index + 1) % len(GEMINI_API_KEYS)
-                next_key_preview = GEMINI_API_KEYS[_key_index][:12] + '...'
-                print(f"[Gemini] 429 on key ...{current_key[-6:]}. "
-                      f"Rotating to key {next_key_preview}, waiting {wait}s... "
-                      f"(attempt {attempt + 1}/{total_attempts})")
+                print(f'[Gemini] 429 rate limit, rotating key, waiting {wait}s (attempt {attempt+1}/{total_attempts})')
                 time.sleep(wait)
                 continue
 
@@ -430,10 +436,21 @@ def call_gemini_analysis(prompt: str) -> str:
                 raise RuntimeError(f'Gemini API Error ({resp.status_code}): {err_msg or resp.text}')
 
             if resp.status_code == 429:
+                err_body = ''
+                try:
+                    err_body = str(resp.json())
+                except Exception:
+                    pass
+                if 'PerDay' in err_body or 'per_day' in err_body.lower() or 'daily' in err_body.lower():
+                    raise RuntimeError(
+                        'Gemini API daily quota exhausted. '
+                        'Please create a new API key at https://aistudio.google.com/app/apikey '
+                        'or wait until tomorrow for the quota to reset.'
+                    )
                 retry_after = resp.headers.get('Retry-After')
-                wait = int(retry_after) if retry_after else min(10 * (2 ** attempt), 60)
+                wait = int(retry_after) if retry_after else min(5 * (2 ** attempt), 30)
                 _key_index = (_key_index + 1) % len(GEMINI_API_KEYS)
-                print(f"[Gemini-Analysis] 429, rotating key, waiting {wait}s... (attempt {attempt+1})")
+                print(f'[Gemini-Analysis] 429, rotating key, waiting {wait}s (attempt {attempt+1})')
                 time.sleep(wait)
                 continue
 
@@ -448,17 +465,17 @@ def call_gemini_analysis(prompt: str) -> str:
         except Exception as e:
             error_str = str(e)
             if '429' in error_str or 'rate' in error_str.lower():
-                wait = min(10 * (2 ** attempt), 60)
+                wait = min(5 * (2 ** attempt), 30)
                 _key_index = (_key_index + 1) % len(GEMINI_API_KEYS)
-                print(f"[Gemini-Analysis] Rate error on attempt {attempt+1}, rotating key, waiting {wait}s...")
+                print(f'[Gemini-Analysis] Rate error attempt {attempt+1}, rotating key, waiting {wait}s...')
                 time.sleep(wait)
                 continue
             raise RuntimeError(f'Gemini API error: {error_str}')
 
     raise RuntimeError(
-        'All Gemini API keys are rate-limited. '
-        'Please wait 1 minute and try again, or add a new API key at '
-        'https://aistudio.google.com/app/apikey'
+        'Gemini API daily quota exhausted. '
+        'Please create a new API key at https://aistudio.google.com/app/apikey '
+        'or wait until tomorrow for the quota to reset.'
     )
 
 
