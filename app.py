@@ -73,7 +73,7 @@ if not GEMINI_API_KEYS:
 
 _key_index = 0  # tracks which key is currently active
 
-GEMINI_MODEL = 'gemini-2.0-flash'   # free-tier: 15 RPM
+GEMINI_MODEL = 'gemini-3.6-flash'   # updated — gemini-2.0-flash & 2.5-flash deprecated
 
 GEMINI_API_URL = (
     'https://generativelanguage.googleapis.com/v1beta/models/'
