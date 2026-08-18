@@ -373,7 +373,9 @@ def call_gemini(prompt: str, expect_json: bool = True, temperature: float = 0.3)
 
             resp.raise_for_status()
             parts = resp.json()['candidates'][0]['content']['parts']
-            return ''.join(p.get('text', '') for p in parts)
+            # Filter out thought parts from thinking models (gemini-3.6-flash etc.)
+            answer_parts = [p.get('text', '') for p in parts if not p.get('thought', False)]
+            return ''.join(answer_parts)
 
         except RuntimeError:
             raise
@@ -456,7 +458,9 @@ def call_gemini_analysis(prompt: str) -> str:
 
             resp.raise_for_status()
             parts = resp.json()['candidates'][0]['content']['parts']
-            return ''.join(p.get('text', '') for p in parts)
+            # Filter out thought parts from thinking models (gemini-3.6-flash etc.)
+            answer_parts = [p.get('text', '') for p in parts if not p.get('thought', False)]
+            return ''.join(answer_parts)
 
         except RuntimeError:
             raise
