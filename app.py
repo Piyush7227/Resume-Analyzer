@@ -1035,11 +1035,11 @@ def run_iterative_optimization(resume_text: str, original_score: int,
         print(f"[Iter] Pass-1 verify failed: {e}")
         return improved_data, original_score, {}, {}, 1, improved_text
 
-    print(f"[Iter] Pass 1: {original_score} \u2192 {current_score}")
+    print(f"[Iter] Pass 1: {original_score} -> {current_score}")
     iterations = 1
 
     # ── Passes 2-3: targeted boost if below target ─────────────────
-    while current_score < TARGET and iterations < 3:
+    while current_score < TARGET and iterations < 1:  # 1 pass max — keeps Render free-tier within timeout
         weak = []
         for key, mx in cat_maxes.items():
             actual = current_bd.get(key, 0)
@@ -1066,7 +1066,7 @@ def run_iterative_optimization(resume_text: str, original_score: int,
             print(f"[Iter] Pass-{iterations+1} verify failed: {e}")
             break
 
-        print(f"[Iter] Pass {iterations+1}: {current_score} \u2192 {boosted_score}")
+        print(f"[Iter] Pass {iterations+1}: {current_score} -> {boosted_score}")
 
         if boosted_score > current_score:
             improved_data = boosted_data
@@ -1075,7 +1075,7 @@ def run_iterative_optimization(resume_text: str, original_score: int,
             current_sub   = vb.get('sub_scores', {})
             improved_text = boosted_text
         else:
-            print(f"[Iter] Pass {iterations+1} did not improve \u2014 stopping.")
+            print(f"[Iter] Pass {iterations+1} did not improve -- stopping.")
             break
 
         iterations += 1
