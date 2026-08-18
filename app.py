@@ -480,15 +480,41 @@ def call_gemini_analysis(prompt: str) -> str:
 
 
 def parse_json_response(raw_text: str) -> dict:
-    """Robustly extract a JSON object from raw Gemini response text."""
+    """Robustly extract a JSON object from raw Gemini response text.
+    Handles invalid escape sequences produced by newer Gemini models.
+    """
     start = raw_text.find('{')
     end   = raw_text.rfind('}')
     if start == -1 or end == -1 or end <= start:
         raise ValueError(f"No JSON found in response.\nRaw: {raw_text[:400]}")
+
+    candidate = raw_text[start:end + 1]
+
+    # Attempt 1: direct parse
     try:
-        return json.loads(raw_text[start:end + 1])
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Malformed JSON: {e}\nRaw: {raw_text[:400]}")
+        return json.loads(candidate)
+    except json.JSONDecodeError:
+        pass
+
+    # Attempt 2: fix invalid backslash escapes (gemini-3.6-flash produces \_ \: etc.)
+    # Replace any \ not followed by a valid JSON escape char with \\
+    cleaned = re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', candidate)
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+
+    # Attempt 3: strip markdown code fences and retry
+    stripped = re.sub(r'^```(?:json)?\s*|\s*```$', '', raw_text.strip(), flags=re.MULTILINE)
+    start2 = stripped.find('{')
+    end2   = stripped.rfind('}')
+    if start2 != -1 and end2 > start2:
+        try:
+            return json.loads(stripped[start2:end2 + 1])
+        except json.JSONDecodeError:
+            pass
+
+    raise ValueError(f"Malformed JSON after all repair attempts.\nRaw: {raw_text[:400]}")
 
 
 def normalize_resume_text(text: str) -> str:
