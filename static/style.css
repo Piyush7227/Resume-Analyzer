@@ -1313,16 +1313,88 @@ a {
   color: var(--text-muted);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+}
+
+.compare-col ul li {
+  line-height: 1.5;
+  padding-left: 16px;
+  position: relative;
+}
+
+.col-improved ul li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--success);
+  font-weight: bold;
+}
+
+.col-ats ul li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.col-todo ul li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--warning);
+  font-weight: bold;
 }
 
 .compare-summary-box {
   font-size: 13px;
-  color: var(--text-muted);
-  margin-top: 14px;
-  padding: 12px;
+  line-height: 1.55;
+  color: var(--text-main);
+  margin-top: 16px;
+  padding: 14px;
   background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
+}
+
+.improvement-notes-box {
+  margin-top: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.improvement-notes-box h4 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.notes-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notes-list li {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-main);
+  padding-left: 20px;
+  position: relative;
+}
+
+.notes-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--success);
+  font-weight: bold;
 }
 
 /* Optimization Intelligence Report */
@@ -1378,6 +1450,35 @@ a {
 .report-stat-lbl {
   font-size: 10px;
   color: var(--text-dim);
+}
+
+.report-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.opt-kw-label {
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-right: 6px;
+}
+
+.opt-kw-tag, .opt-section-tag {
+  display: inline-block;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: #A5B4FC;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 4px;
+  margin-bottom: 4px;
 }
 
 /* ── Workflow Section ────────────────────────────────── */

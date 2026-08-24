@@ -571,14 +571,14 @@ function renderOptimizationReport(report) {
 
   const kwsEl = document.getElementById('opt-report-kws');
   if (report.keywords_list?.length) {
-    kwsEl.innerHTML = `<span class="opt-kw-label">Keywords added:</span>` +
-      report.keywords_list.map(k => `<span class="opt-kw-tag">${esc(k)}</span>`).join('');
+    kwsEl.innerHTML = `<span class="opt-kw-label">Keywords added:</span> ` +
+      report.keywords_list.map(k => `<span class="opt-kw-tag">${esc(k)}</span>`).join(' ');
     kwsEl.style.display = 'flex';
   }
   const secEl = document.getElementById('opt-report-sections');
   if (report.sections_improved?.length) {
-    secEl.innerHTML = `<span class="opt-kw-label">Sections optimized:</span>` +
-      report.sections_improved.map(s => `<span class="opt-section-tag">${esc(s)}</span>`).join('');
+    secEl.innerHTML = `<span class="opt-kw-label">Sections optimized:</span> ` +
+      report.sections_improved.map(s => `<span class="opt-section-tag">${esc(s)}</span>`).join(' ');
     secEl.style.display = 'flex';
   }
   card.style.display = 'block';
@@ -646,7 +646,7 @@ function renderComparison(cmp, originalScore, improvementNotes, isVerified) {
     const notesRow = document.getElementById('improvement-notes-row');
     const notesList = document.getElementById('improvement-notes-list');
     notesList.innerHTML = improvementNotes.map(n =>
-      `<span class="improvement-note-tag">${esc(n)}</span>`).join('');
+      `<li>${esc(n)}</li>`).join('');
     notesRow.style.display = 'block';
   }
 
