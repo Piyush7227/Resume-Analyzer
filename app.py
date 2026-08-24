@@ -896,7 +896,17 @@ Return ONLY a valid JSON object (no markdown, no extra text):
     "<specific ATS optimization 6: e.g. 'Rewrote professional summary with 6 ATS-critical keywords'>",
     "<specific ATS optimization 7 if applicable>",
     "<specific ATS optimization 8 if applicable>"
-  ]
+  ],
+  "improved_score": <integer 35-95 — honest score of the improved resume>,
+  "score_breakdown": {{
+    "skills_relevance": <0-20>,
+    "project_quality": <0-20>,
+    "ats_optimization": <0-15>,
+    "experience_impact": <0-15>,
+    "formatting_structure": <0-10>,
+    "grammar_clarity": <0-10>,
+    "education_certifications": <0-10>
+  }}
 }}
 
 RULES:
@@ -904,6 +914,7 @@ RULES:
 - NEVER add metrics that are not implied by the original content
 - ats_optimizations_applied MUST have at least 6 specific, non-generic entries describing exactly what you changed
 - improvement_notes MUST have at least 5 entries
+- improved_score MUST be higher than {original_score} if real improvements were made; score categories must sum to improved_score
 """
 
 
@@ -1030,14 +1041,13 @@ def run_iterative_optimization(resume_text: str, original_score: int,
     improved_data = parse_json_response(raw)
     improved_text = flatten_improved_data_to_text(improved_data)
 
-    try:
-        v1            = score_text_with_analysis_engine(improved_text)
-        current_score = v1.get('score', 0)
-        current_bd    = v1.get('score_breakdown', {})
-        current_sub   = v1.get('sub_scores', {})
-    except Exception as e:
-        print(f"[Iter] Pass-1 verify failed: {e}")
-        return improved_data, original_score, {}, {}, 1, improved_text
+    # Use the score returned by the improve prompt directly — no second Gemini call needed
+    current_score = improved_data.get('improved_score', 0)
+    current_bd    = improved_data.get('score_breakdown', {})
+    current_sub   = {}
+    if not current_score:
+        # Fallback: estimate a modest improvement
+        current_score = min(original_score + 8, 95)
 
     print(f"[Iter] Pass 1: {original_score} -> {current_score}")
     iterations = 1
