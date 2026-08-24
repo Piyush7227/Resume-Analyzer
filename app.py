@@ -348,21 +348,18 @@ def call_gemini(prompt: str, expect_json: bool = True, temperature: float = 0.3)
                 except Exception:
                     pass
 
-                # Daily quota exhausted — no point retrying or sleeping
-                if 'PerDay' in err_body or 'per_day' in err_body.lower() or 'daily' in err_body.lower():
-                    raise RuntimeError(
-                        'Gemini API daily quota exhausted. '
-                        'Please create a new API key at https://aistudio.google.com/app/apikey '
-                        'or wait until tomorrow for the quota to reset.'
-                    )
+                # If multiple keys configured, rotate to next key immediately
+                if len(GEMINI_API_KEYS) > 1 and attempt < total_attempts - 1:
+                    _key_index = (_key_index + 1) % len(GEMINI_API_KEYS)
+                    print(f'[Gemini] Key {_key_index} rate limited/exhausted, rotating key...')
+                    time.sleep(2)
+                    continue
 
-                # Per-minute rate limit — rotate key and retry with short wait
-                retry_after = resp.headers.get('Retry-After')
-                wait = int(retry_after) if retry_after else min(5 * (2 ** attempt), 30)
-                _key_index = (_key_index + 1) % len(GEMINI_API_KEYS)
-                print(f'[Gemini] 429 rate limit, rotating key, waiting {wait}s (attempt {attempt+1}/{total_attempts})')
-                time.sleep(wait)
-                continue
+                raise RuntimeError(
+                    'Gemini API quota limit reached on Google Free Tier (429). '
+                    'Please create a new API key at https://aistudio.google.com/app/apikey '
+                    'and update GEMINI_API_KEYS in Render Environment Variables.'
+                )
 
             if resp.status_code in (400, 403):
                 err_data = resp.json() if resp.headers.get('content-type', '').startswith('application/json') else {}
