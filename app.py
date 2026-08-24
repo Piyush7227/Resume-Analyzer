@@ -893,9 +893,18 @@ Return ONLY a valid JSON object (no markdown, no extra text):
     "<specific ATS optimization 3: e.g. 'Replaced 8 weak action verbs with high-impact alternatives'>",
     "<specific ATS optimization 4: e.g. 'Added quantified metrics to all 9 project bullets'>",
     "<specific ATS optimization 5: e.g. 'Expanded skills section from 12 to 28 technologies with ATS categorization'>",
-    "<specific ATS optimization 6: e.g. 'Rewrote professional summary with 6 ATS-critical keywords'>",
-    "<specific ATS optimization 7 if applicable>",
-    "<specific ATS optimization 8 if applicable>"
+    "<specific ATS optimization 6: e.g. 'Rewrote professional summary with 6 ATS-critical keywords'>"
+  ],
+  "what_improved": [
+    "<key enhancement 1: e.g. 'Strong DSA credibility backed by measurable evidence (600+ problems solved, top rank #140)'>",
+    "<key enhancement 2: e.g. 'Detailed full-stack projects demonstrating backend architecture, RBAC, and payment integration'>",
+    "<key enhancement 3: e.g. 'Inclusion of exact performance metrics (sub-200ms latency) proving focus on optimization'>",
+    "<key enhancement 4: e.g. 'Comprehensive summary tailored specifically for target engineering roles'>"
+  ],
+  "what_still_needs_work": [
+    "<further recommendation 1: e.g. 'Lack of professional internship experience or open-source contribution history'>",
+    "<further recommendation 2: e.g. 'Projects lack direct live demo links in the project section headers'>",
+    "<further recommendation 3: e.g. 'High school education details take up unnecessary space that could be used for projects'>"
   ],
   "improved_score": <integer 35-95 — honest score of the improved resume>,
   "score_breakdown": {{
@@ -1591,12 +1600,21 @@ def improve_resume():
         print(f"[Improve] Done. {original_score} -> {verified_score} "
               f"in {iterations_run} pass(es).")
 
+        what_imp = improved_data.get('what_improved') or improved_data.get('improvement_notes') or []
+        what_rec = improved_data.get('what_still_needs_work') or [
+            "Add direct live demo / GitHub links to project section headers.",
+            "Consider adding open-source contributions or technical internship experience.",
+            "Focus high school education details down to free up space for projects."
+        ]
+
         return jsonify({
             'success':                   True,
             'improved_data':             improved_data,
             'pdf_filename':              pdf_filename,
             'improvement_notes':         improved_data.get('improvement_notes', []),
             'ats_optimizations_applied': ats_opts,
+            'what_improved':             what_imp,
+            'what_still_needs_work':    what_rec,
             'verified_score':            verified_score,
             'verified_breakdown':        verified_breakdown,
             'verified_sub_scores':       verified_sub,

@@ -807,38 +807,14 @@ improveBtn.addEventListener('click', async () => {
         score_delta:              data.verified_score - originalScore,
         score_breakdown:          data.verified_breakdown || {},
         sub_scores:               data.verified_sub_scores || {},
-        what_improved:            [],
-        what_still_needs_work:    [],
+        what_improved:            data.what_improved || improvementNotes || [],
+        what_still_needs_work:    data.what_still_needs_work || [],
         ats_optimization_applied: lastAtsOptimizations,
         comparison_summary: `This score was verified using the same engine as the main analyzer. Re-uploading the improved PDF should return ${data.verified_score} ±3 pts.`,
         scoring_engine:           'unified',
       };
       renderComparison(verifCmp, originalScore, improvementNotes, true);
       renderOptimizationReport(lastOptReport);
-
-      // Also fire /compare in background for the detail lists (what improved, ATS tips, etc.)
-      fetch('/compare', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ original_text: originalText, improved_text: lastImprovedText, original_score: originalScore }),
-      })
-      .then(r => r.json())
-      .then(cmpData => {
-        if (cmpData.success && cmpData.comparison) {
-          // Merge: keep the verified score but update the detail lists
-          const merged = {
-            ...cmpData.comparison,
-            improved_score: data.verified_score,
-            score_delta:    data.verified_score - originalScore,
-            scoring_engine: 'unified',
-            ats_optimization_applied: lastAtsOptimizations,
-          };
-          renderComparison(merged, originalScore, improvementNotes, true);
-          renderOptimizationReport(lastOptReport);
-        }
-      })
-      .catch(() => { /* detail lists unavailable — verified score already shown */ });
-
     } else {
       // Fallback: fire /compare
       fetch('/compare', {
